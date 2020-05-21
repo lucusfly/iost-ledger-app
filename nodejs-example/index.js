@@ -82,7 +82,7 @@ Utils.delay().then(ledger.open).then(async () => {
 
   //! Complete A creation by master and create new account B with hardware keys
   const commitA = await iost.commitTx(trxA, account);
-  const pubKeyB = await ledger.getPublicKey({index: 0, p2: ledger.P1P2.BASE58});
+  const pubKeyB = await ledger.getPublicKey({index: 0, p1: ledger.P1P2.CONFIRM, p2: ledger.P1P2.BASE58});
   const trxB = iost.newAccount("b", trxInfoA[0], pubKeyB.base58, 1, 10);
   const trxInfoB = test.getTrxSignupAction(iost.getTxInfo(trxB));
 
@@ -99,7 +99,7 @@ Utils.delay().then(ledger.open).then(async () => {
 
   //! Complete B creation by A and create new account C with hardware keys
   const commitB = await iost.commitTx(trxB, account);
-  const pubKeyC = await ledger.getPublicKey({index: 1, p2: ledger.P1P2.BASE58});
+  const pubKeyC = await ledger.getPublicKey({index: 1, p1: ledger.P1P2.CONFIRM, p2: ledger.P1P2.BASE58});
   const trxC = iost.newAccount("c", trxInfoB[0], pubKeyC.base58, 1, 10);
   const trxInfoC = test.getTrxSignupAction(iost.getTxInfo(trxC));
 
@@ -118,6 +118,7 @@ Utils.delay().then(ledger.open).then(async () => {
     sign: async (bytes) => {
       return await ledger.signMessage({
         index: 0,
+        p1: ledger.P1P2.CONFIRM,
         message: iost.createHash(bytes)
       });
     }
@@ -130,21 +131,21 @@ Utils.delay().then(ledger.open).then(async () => {
 
   //! Transfer some coins from B to C and switch to account C
   test.checkTransfer(await iost.commitTx(iost.newTranfer(account.name, trxInfoC[0], 33), account));
-  account = {
-    name: trxInfoC[0],
-    pubKey: pubKeyC.base58,
-    sign: async (bytes) => {
-      return await ledger.signMessage({
-        index: 1,
-        message: bytes,
-        p2: ledger.P1P2.BIN | ledger.P1P2.MORE
-      });
-    }
-  };
+  // account = {
+  //   name: trxInfoC[0],
+  //   pubKey: pubKeyC.base58,
+  //   sign: async (bytes) => {
+  //     return await ledger.signMessage({
+  //       index: 1,
+  //       message: bytes,
+  //       p2: ledger.P1P2.BIN | ledger.P1P2.MORE
+  //     });
+  //   }
+  // };
 
-  //! Transfer some coins from C to A by signing trx raw bytes
-  test.checkTransfer(await iost.commitTx(iost.newTranfer(account.name, trxInfoA[0], 11), account));
-  Assert.deepStrictEqual(await iost.getBalance(account.name), {balance: 22, frozen_balances: []});
+  // //! Transfer some coins from C to A by signing trx raw bytes
+  // test.checkTransfer(await iost.commitTx(iost.newTranfer(account.name, trxInfoA[0], 11), account));
+  // Assert.deepStrictEqual(await iost.getBalance(account.name), {balance: 22, frozen_balances: []});
   console.log("COMPLETE");
 
 }).then(ledger.close).catch(Utils.fail);

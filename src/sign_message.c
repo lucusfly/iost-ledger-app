@@ -1145,6 +1145,11 @@ void handle_sign_message(
         clear_context_sign_message();
         THROW(SW_OK);
     }
+
+#if defined(TARGET_NANOS)
+    UX_DISPLAY(ui_tx_confirm_step, NULL);
+#endif
+
     *flags |= IO_ASYNCH_REPLY;
 }
 void clear_context_sign_message()

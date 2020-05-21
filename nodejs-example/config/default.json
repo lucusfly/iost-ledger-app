@@ -1,7 +1,8 @@
 {
     "iost": {
         "api": {
-            "url": "https://test.api.iost.io"
+            "url": "https://test.api.iost.io",
+            "chain": 1023
         },
         "account": {
             "name": "ledger_001",
