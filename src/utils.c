@@ -2,9 +2,9 @@
 #include <os.h>
 
 uint32_t bin2hex(
-        uint8_t* dst,
         const uint8_t* const data,
-        const uint32_t in_len
+        const uint32_t in_len,
+        uint8_t* dst
 ) {
 	static uint8_t const hex[] = "0123456789abcdef";
 

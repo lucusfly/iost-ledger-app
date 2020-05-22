@@ -41,7 +41,6 @@ struct bagl_element_s;
 
 #endif // TARGET_NANOS
 
-
 //extern bagl_element_t ui_background();
 //extern bagl_element_t ui_icon_left(unsigned char user_id, unsigned char icon_id);
 //extern bagl_element_t ui_icon_right(unsigned char user_id, unsigned char icon_id);
@@ -49,5 +48,37 @@ struct bagl_element_s;
 
 extern void ui_idle(void);
 extern void seproxyhal_display(const struct bagl_element_s* element);
+
+typedef struct ui_context
+{
+    uint8_t msg_body[DISPLAY_SIZE * DISPLAY_SIZE];
+    uint16_t msg_length;
+
+    // Lines on the UI Screen
+    // L1 Only used for title in Nano X compare
+    char approve_l2[DISPLAY_SIZE + 1];
+    // Public Key Compare
+    uint8_t display_index;
+    uint8_t partial_msg[DISPLAY_SIZE + 1];
+} ui_context_t;
+
+extern void ui_shift_msg(
+    ui_context_t* context
+);
+extern unsigned int ui_compare_button(
+    ui_context_t* context,
+    const unsigned int button_mask,
+    const unsigned int button_mask_counter
+);
+extern const bagl_element_t* ui_prepro_compare(
+    ui_context_t* context,
+    const bagl_element_t* element
+);
+extern void ui_compare_msg(
+    ui_context_t* context
+);
+extern void ui_clear_context(
+    ui_context_t* context
+);
 
 #endif // LEDGER_APP_IOST_UI_H

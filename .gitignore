@@ -19,3 +19,4 @@ proto/*.h
 # External sdk
 bolos_env
 node_modules/
+venv

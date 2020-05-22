@@ -17,15 +17,11 @@ RUN apt-get -y install \
 RUN apt-get -y install \
     libudev-dev libusb-1.0-0-dev python3-dev \
     protobuf-compiler python-protobuf
-#    python3-dev python3-coverage python3-cryptography python3-hidapi python3-requests
 # speculos dpendencies
 RUN apt-get -y install \
     python3-pil python3-pyelftools python3-mnemonic python3-setuptools python3-construct \
     cmake libvncserver-dev perl-modules qemu-user-static \
     gcc-arm-linux-gnueabihf gcc-multilib-arm-linux-gnueabi
-#gdb-multiarch libc6-dev-armhf-cross
-#g++-multilib-arm-linux-gnueabihf gcc-multilib-arm-linux-gnueabi g++-8-multilib-arm-linux-gnueabi
-#gcc-multilib g++-multilib \
 # create limited user
 RUN adduser --disabled-password --gecos "" bob
 RUN usermod -aG nogroup bob
@@ -56,19 +52,3 @@ RUN touch app/Makefile
 EXPOSE ${ADPU_PORT}
 EXPOSE ${VNC_PORT}
 ENTRYPOINT ["python3", "app/x.py"]
-
-#build-essential libc6-i386 libc6-dev-i386 python python-pip libudev-dev libusb-1.0-0-dev python3-dev git
-#ENV BOLOS_ENV /work/bolos
-#RUN mkdir -p ${BOLOS_ENV}
-#WORKDIR ${BOLOS_ENV}
-#ADD clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz ${BOLOS_ENV}
-#RUN ln -s "clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04" "clang-arm-fropi"
-#ADD gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2 ${BOLOS_ENV}
-#ARG BOLOS_SDK_NAME=nanos-secure-sdk-nanos-1421
-#ADD ${BOLOS_SDK_NAME}.* ${BOLOS_ENV}
-#ENV BOLOS_SDK ${BOLOS_ENV}/${BOLOS_SDK_NAME}
-#RUN git clone https://github.com/LedgerHQ/blue-loader-python.git && ( cd blue-loader-python ; pip install ledgerblue )
-#RUN rm -rf blue-loader-python
-#CMD /bin/bash
-# https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q1-update/+download/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
-# http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz

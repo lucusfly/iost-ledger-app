@@ -1,6 +1,6 @@
 {
     "ledger": {
-        "transport": "usb"
+        "transport": "hid"
     }
 
 }

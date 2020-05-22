@@ -33,6 +33,7 @@
 ../../ledger-app-iost.includes
 ../../LICENSE
 ../../Makefile
+../../deploy.sh
 ../../nodejs-example/config/default.json
 ../../nodejs-example/config/production.json
 ../../nodejs-example/index.js

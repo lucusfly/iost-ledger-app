@@ -60,13 +60,13 @@ const test = {
  * First we use predefined account 'ledger_001' with provided private key to create new account A. (Lines 73 - 85)
  * This account uses newly generated key pair and dosn't store keys on ledger.
  * Then we retrieve the public key from ledger and create new account B owned by account A. (Lines 86 - 102)
- *  And finally we create account C owned by account B and sign transaction with ledger. (Lines 103 - 149)
+ * And finally we create account C owned by account B and sign transaction with ledger. (Lines 103 - 149)
  *****************************************************************************************************/
 
 Utils.delay().then(ledger.open).then(async () => {
   //! Check ledger app version
   const ledgerConfig = await ledger.getConfiguration();
-  Assert.deepStrictEqual(ledgerConfig, {hasStorage: false, version: "0.0.2"});
+  Assert.deepStrictEqual(ledgerConfig, {hasStorage: false, version: "0.0.3"});
 
   //! Create new account A with software keys
   let account = iost.login(Config.iost.account.name, Config.iost.account.key);
@@ -79,6 +79,7 @@ Utils.delay().then(ledger.open).then(async () => {
   Assert.strictEqual(trxInfoA[1], pubKeyA);
   Assert.strictEqual(trxInfoA[2], pubKeyA);
   Assert.deepStrictEqual(trxA.actions[0], test.createTrxSignupAction(trxInfoA));
+  console.log("Ready to create account A");
 
   //! Complete A creation by master and create new account B with hardware keys
   const commitA = await iost.commitTx(trxA, account);
@@ -92,6 +93,7 @@ Utils.delay().then(ledger.open).then(async () => {
   Assert.deepStrictEqual(trxB.actions[0], test.createTrxSignupAction(trxInfoB));
   Assert.strictEqual(trxInfoB[1], pubKeyB.base58);
   Assert.strictEqual(trxInfoB[2], pubKeyB.base58);
+  console.log("Ready to create account B");
 
   //! Transfer some coins from master to A and switch to account A
   test.checkTransfer(await iost.commitTx(iost.newTranfer(account.getID(), trxInfoA[0], 88), account));
@@ -109,6 +111,7 @@ Utils.delay().then(ledger.open).then(async () => {
   Assert.deepStrictEqual(trxC.actions[0], test.createTrxSignupAction(trxInfoC));
   Assert.strictEqual(trxInfoC[1], pubKeyC.base58);
   Assert.strictEqual(trxInfoC[2], pubKeyC.base58);
+  console.log("Ready to create account C");
 
   //! Transfer some coins from A to B and switch to account B
   test.checkTransfer(await iost.commitTx(iost.newTranfer(account.getID(), trxInfoB[0], 66), account));
@@ -127,6 +130,7 @@ Utils.delay().then(ledger.open).then(async () => {
   const commitC = await iost.commitTx(trxC, account);
   test.checkCommit(trxC, commitC);
   Assert.deepStrictEqual(trxInfoC, test.getTrxSignupReceipt(iost.getTxInfo(commitC)));
+  console.log("Ready to transfer funds");
 
   //! Transfer some coins from B to C and switch to account C
   test.checkTransfer(await iost.commitTx(iost.newTranfer(account.name, trxInfoC[0], 33), account));

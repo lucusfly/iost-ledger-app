@@ -173,7 +173,81 @@ void ui_idle(void) {
 #endif // TARGET_NANOS
 }
 
-void io_seproxyhal_display(const bagl_element_t* element)
-{
+void io_seproxyhal_display(const bagl_element_t* element) {
     io_seproxyhal_display_default(element);
+}
+
+void ui_shift_msg(ui_context_t* context) {
+    os_memcpy(
+        context->partial_msg,
+        context->msg_body + context->display_index,
+        DISPLAY_SIZE
+    );
+}
+
+unsigned int ui_compare_button(
+    ui_context_t* context,
+    const unsigned int button_mask,
+    const unsigned int button_mask_counter
+) {
+    UNUSED(button_mask_counter);
+    switch (button_mask) {
+        case BUTTON_LEFT: // Left
+        case BUTTON_EVT_FAST | BUTTON_LEFT:
+            if (context->display_index > 0) {
+                context->display_index--;
+            }
+            ui_shift_msg(context);
+            UX_REDISPLAY();
+            break;
+        case BUTTON_RIGHT: // Right
+        case BUTTON_EVT_FAST | BUTTON_RIGHT:
+            if (context->display_index < context->msg_length - DISPLAY_SIZE) {
+                context->display_index++;
+            }
+            ui_shift_msg(context);
+            UX_REDISPLAY();
+            break;
+        case BUTTON_EVT_RELEASED | BUTTON_LEFT | BUTTON_RIGHT: // Continue
+            ui_clear_context(context);
+            ui_idle();
+            break;
+    }
+    return 0;
+}
+
+const bagl_element_t* ui_prepro_compare(
+    ui_context_t* context,
+    const bagl_element_t* element
+) {
+    if (
+        (element->component.userid == LEFT_ICON_ID) &&
+        (context->display_index == 0)
+    ) {
+        return NULL; // Hide Left Arrow at Left Edge
+    }
+    if (
+        (element->component.userid == RIGHT_ICON_ID) &&
+        (context->display_index == context->msg_length - DISPLAY_SIZE)
+    ) {
+        return NULL; // Hide Right Arrow at Right Edge
+    }
+    return element;
+}
+
+void ui_compare_msg(
+    ui_context_t* context
+) {
+    // init partial key str from full str
+    os_memmove(context->partial_msg, context->msg_body, DISPLAY_SIZE);
+    context->partial_msg[DISPLAY_SIZE] = '\0';
+
+    // init display index
+    context->display_index = 0;
+}
+
+void ui_clear_context(
+    ui_context_t* context
+) {
+    os_memset(context, 0, sizeof(ui_context_t));
 }
